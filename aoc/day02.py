@@ -24,6 +24,7 @@ def is_safe(report):
         modified_report = report[:i] + report[i+1:]
         if check_report(modified_report):
             out[1] = True
+            break
     
     return out
 
