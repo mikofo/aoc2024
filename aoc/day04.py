@@ -42,8 +42,8 @@ class Solver(aoc.util.Solver):
             if x < 1 or y < 1 or y == self.cols - 1 or x == self.rows - 1:
                 return False
             
-            d1 = str(self.matrix[x-1][y-1]) + str(self.matrix[x+1][y+1])
-            d2 =  str(self.matrix[x-1][y+1]) + str(self.matrix[x+1][y-1])
+            d1 = self.matrix[x-1][y-1] + self.matrix[x+1][y+1]
+            d2 =  self.matrix[x-1][y+1] + self.matrix[x+1][y-1]
 
             if not (d1 == 'MS' or d1 == 'SM'):
                 return False
