@@ -9,15 +9,6 @@ class Solver(aoc.util.Solver):
 
     def is_in_bounds(self, x, y):
         return 0 <= x < self.rows and 0 <= y < self.cols
-    
-    def is_diagonal(self, line1, line2):
-        if line1[1] != line2[1]:
-            return False
-        if line1[0][1] == line1[1][1] or line1[2][1] == line1[1][1]:
-            return False
-        if line2[0][1] == line2[1][1] or line2[2][1] == line2[1][1]:
-            return False
-        return True
 
     def part_one(self) -> int:
         word = 'XMAS'
@@ -44,41 +35,28 @@ class Solver(aoc.util.Solver):
                         if search(i, j, 1, dx, dy):
                             count += 1
         return count
+    
 
     def part_two(self) -> int:
-        word = 'MAS'
-        word_length = 3
-        matches = []
-        directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+        def is_cross(x, y):
+            if x < 1 or y < 1 or y == self.cols - 1 or x == self.rows - 1:
+                return False
+            
+            d1 = str(self.matrix[x-1][y-1]) + str(self.matrix[x+1][y+1])
+            d2 =  str(self.matrix[x-1][y+1]) + str(self.matrix[x+1][y-1])
 
-        def search(x, y, index, dx, dy, path):
-            path.append((x, y))
-
-            if index == word_length:
-                matches.append(path[:])
-                path.pop()
-                return
-
-            nx, ny = x + dx, y + dy
-
-            if not self.is_in_bounds(nx, ny) or self.matrix[nx][ny] != word[index]:
-                path.pop()
-                return
-
-            return search(nx, ny, index + 1, dx, dy, path)
-
+            if not (d1 == 'MS' or d1 == 'SM'):
+                return False
+            
+            if not (d2 == 'MS' or d2 == 'SM'):
+                return False
+            
+            return True
+            
+        count = 0
         for i in range(self.rows):
             for j in range(self.cols):
-                if self.matrix[i][j] == word[0]:
-                    for dx, dy in directions:
-                        search(i, j, 1, dx, dy, [])
-
-        count = 0
-        for i in range(len(matches)):
-            for j in range(i+1, len(matches)):
-                line1 = matches[i]
-                line2 = matches[j]
-                if self.is_diagonal(line1, line2):
+                if self.matrix[i][j] == 'A' and is_cross(i,j):
                     count += 1
-                
+                       
         return count
