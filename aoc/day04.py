@@ -4,7 +4,7 @@ import aoc.util
 class Solver(aoc.util.Solver):
     def __init__(self, input: str):
         super(Solver, self).__init__(input)
-        self.matrix = [list(line) for line in input.splitlines() if line.strip()]
+        self.matrix = input.splitlines()
         self.rows, self.cols = len(self.matrix), len(self.matrix[0])
 
     def is_in_bounds(self, x, y):
