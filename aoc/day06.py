@@ -17,12 +17,7 @@ class Solver(aoc.util.Solver):
         self.maze_size = len(self.maze)
         self.rows = input.index("\n")
         self.cols = int(self.maze_size / self.rows)
-        self.obstacles = []
-        for i in range(self.maze_size):
-            if self.maze[i] == '#':
-                self.obstacles.append(i)
-            elif self.maze[i] == '^':
-                self.start = i
+        self.start = self.maze.index("^")
         self.seen = set()
 
     def getUp(self, n: int):
@@ -36,21 +31,6 @@ class Solver(aoc.util.Solver):
 
     def getDown(self, n: int):
         return n + self.cols if n + self.cols < self.maze_size else None
-    
-    def getNextObstacle(self, n: int, dir: str, obstacles: list) -> int:
-        if dir == 'u':
-            o = [x for x in obstacles if x < n and x % self.cols == n % self.cols]
-        elif dir == 'd':
-            o = [x for x in obstacles if x > n and x % self.cols == n % self.cols]
-        elif dir == 'l':
-            o = [x for x in obstacles if x < n and x // self.cols == n // self.cols]
-        elif dir == 'r':
-            o = [x for x in obstacles if x > n and x // self.cols == n // self.cols]
-        else:
-            return None
-    
-        return min(o, key=lambda x: abs(x - n), default=None) if o else None
-            
     
     def getNext(self, n: int, dir: str):
         actions = {
@@ -76,16 +56,11 @@ class Solver(aoc.util.Solver):
         pos = self.start
         while pos is not None and not (pos,direction) in seen:
             seen.add((pos, direction))
-            peek = self.getNextObstacle(pos, direction, self.obstacles + [o])
-            if peek is None:
-                pos = peek
-                break
-
-            prev = self.getPrev(peek, direction)
-            if prev == pos: 
+            peek = self.getNext(pos, direction)
+            if peek is not None and self.maze[peek] == '#' or peek == o:
                 direction = nextDir[direction]
             else:
-                pos = prev
+                pos = peek
                 
         if pos == None:
             return False
@@ -109,7 +84,7 @@ class Solver(aoc.util.Solver):
         count = 0
     
         with Pool() as pool:
-            indices_to_check = [i for i in range(self.maze_size) if i not in self.obstacles and i in self.seen]
+            indices_to_check = [i for i in range(self.maze_size) if i in self.seen]
             results = pool.map(self.creates_loop, indices_to_check)
             for result in results:
                 if result == True:
