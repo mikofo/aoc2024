@@ -84,7 +84,7 @@ class Solver(aoc.util.Solver):
         count = 0
     
         with Pool() as pool:
-            indices_to_check = [i for i in range(self.maze_size) if i in self.seen]
+            indices_to_check = [i for i in range(self.maze_size) if i in self.seen and i != self.start]
             results = pool.map(self.creates_loop, indices_to_check)
             for result in results:
                 if result == True:
